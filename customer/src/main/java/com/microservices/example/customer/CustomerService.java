@@ -1,5 +1,6 @@
 package com.microservices.example.customer;
 
+import com.microservices.example.common.clients.fraud.FraudCheckResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -23,11 +24,11 @@ public class CustomerService {
                 .build();
         customerRepository.saveAndFlush(customer);
 
-        boolean response = restTemplate.getForObject(
-                "http://localhost:8081/api/v1/fraud-check/" + customer.getId(),
-                Boolean.class);
+        var response = restTemplate.getForObject(
+                "http://fraud/api/v1/fraud-check/" + customer.getId(),
+                FraudCheckResponse.class);
 
-        if (response) {
+        if (response == null || response.isFraud()) {
             throw new IllegalStateException("Customer is a fraud");
         }
     }

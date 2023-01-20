@@ -1,5 +1,6 @@
 package com.microservices.example;
 
+import com.microservices.example.common.clients.fraud.FraudCheckResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +18,8 @@ public class FraudController {
     }
 
     @GetMapping("/{customerId}")
-    public boolean isFraud(@PathVariable Integer customerId) {
-        return fraudCheckService.isFraud(customerId);
+    public FraudCheckResponse isFraud(@PathVariable Integer customerId) {
+        boolean result = fraudCheckService.isFraud(customerId);
+        return new FraudCheckResponse(result);
     }
 }
