@@ -13,6 +13,20 @@ services:
     networks:
       - postgres
     restart: unless-stopped
+  mysql:
+    image: mysql:8.0.19
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'notification'
+      MYSQL_USER: 'damian'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - '3307:3306'
+    expose:
+      - '3307'
+    volumes:
+      - my-db:/var/lib/mysql
   pgadmin:
     container_name: pgadmin
     image: dpage/pgadmin4
@@ -35,3 +49,4 @@ networks:
 volumes:
   postgres:
   pgadmin:
+  my-db:

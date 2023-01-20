@@ -2,3 +2,10 @@
 - Clone the repository
 - Run ```docker-compose up```
 - Create Tables: customer
+
+## Features
+- Feign Client
+- Eureka Server
+- Api Gateway
+- Service Discovery
+- Distributed Tracing
