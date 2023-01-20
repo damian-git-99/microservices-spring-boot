@@ -1,20 +1,19 @@
 package com.microservices.example.customer;
 
-import com.microservices.example.common.clients.fraud.FraudCheckResponse;
+import com.microservices.example.common.clients.fraud.FraudClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 @Component
 public class CustomerService {
     private final CustomerRepository customerRepository;
-    private final RestTemplate restTemplate;
+    private final FraudClient fraudClient;
 
     @Autowired
     public CustomerService(CustomerRepository customerRepository
-            , RestTemplate restTemplate) {
+            , FraudClient fraudClient) {
         this.customerRepository = customerRepository;
-        this.restTemplate = restTemplate;
+        this.fraudClient = fraudClient;
     }
     public void registerCustomer(CustomerRequest customerRequest) {
         Customer customer = Customer.builder()
@@ -24,9 +23,7 @@ public class CustomerService {
                 .build();
         customerRepository.saveAndFlush(customer);
 
-        var response = restTemplate.getForObject(
-                "http://fraud/api/v1/fraud-check/" + customer.getId(),
-                FraudCheckResponse.class);
+        var response = fraudClient.isFraudster(customer.getId());
 
         if (response == null || response.isFraud()) {
             throw new IllegalStateException("Customer is a fraud");
