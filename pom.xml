@@ -12,6 +12,7 @@
         <module>common</module>
         <module>notification</module>
         <module>api-gateway</module>
+        <module>message-broker</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -63,6 +64,11 @@
                 <artifactId>common</artifactId>
                 <version>1.0-SNAPSHOT</version>
                 <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.microservices.example</groupId>
+                <artifactId>message-broker</artifactId>
+                <version>1.0-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
