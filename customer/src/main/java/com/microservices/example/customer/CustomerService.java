@@ -43,8 +43,8 @@ public class CustomerService {
 
         log.info("Sending notification {}", notificationRequest);
         rabbitMQMessageProducer.publish(
-                "internal.notification",
-                "internal.notification.routing.key",
+                "internal.exchange",
+                "internal.notification.routing-key",
                 notificationRequest
         );
     }

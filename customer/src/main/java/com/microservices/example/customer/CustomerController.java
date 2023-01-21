@@ -19,7 +19,7 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
-    @PostMapping
+    @PostMapping("")
     public void registerCustomer(@RequestBody CustomerRequest customerRequest) {
         log.info("Registering customer {}", customerRequest);
         customerService.registerCustomer(customerRequest);

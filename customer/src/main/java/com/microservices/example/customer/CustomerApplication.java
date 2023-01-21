@@ -9,6 +9,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication(
         scanBasePackages = {
                 "com.microservices.example.broker",
+                "com.microservices.example.customer",
         }
 )
 @EnableFeignClients(
