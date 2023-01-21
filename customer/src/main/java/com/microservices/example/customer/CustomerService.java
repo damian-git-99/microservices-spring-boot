@@ -1,5 +1,6 @@
 package com.microservices.example.customer;
 
+import com.microservices.example.common.clients.fraud.FraudCheckResponse;
 import com.microservices.example.common.clients.fraud.FraudClient;
 import com.microservices.example.common.clients.notification.NotificationClient;
 import com.microservices.example.common.clients.notification.NotificationRequest;
@@ -29,13 +30,14 @@ public class CustomerService {
                 .lastName(customerRequest.getLastName())
                 .email(customerRequest.getEmail())
                 .build();
+
         customerRepository.saveAndFlush(customer);
 
-        var response = fraudClient.isFraudster(customer.getId());
+        FraudCheckResponse response = fraudClient.isFraudster(customer.getId());
 
         log.info("Fraud check for customer id {} returned {}", customer.getId(), response.isFraud());
 
-        if (response == null || response.isFraud()) {
+        if (response.isFraud()) {
             throw new IllegalStateException("Customer is a fraud");
         }
 
