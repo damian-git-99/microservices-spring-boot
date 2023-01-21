@@ -3,10 +3,12 @@ package com.microservices.example.customer;
 import com.microservices.example.common.clients.fraud.FraudClient;
 import com.microservices.example.common.clients.notification.NotificationClient;
 import com.microservices.example.common.clients.notification.NotificationRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
+@Slf4j
 public class CustomerService {
     private final CustomerRepository customerRepository;
     private final FraudClient fraudClient;
@@ -31,6 +33,8 @@ public class CustomerService {
 
         var response = fraudClient.isFraudster(customer.getId());
 
+        log.info("Fraud check for customer id {} returned {}", customer.getId(), response.isFraud());
+
         if (response == null || response.isFraud()) {
             throw new IllegalStateException("Customer is a fraud");
         }
@@ -42,6 +46,7 @@ public class CustomerService {
                         customer.getFirstName())
         );
 
+        log.info("Sending notification {}", notificationRequest);
         notificationClient.sendNotification(notificationRequest);
     }
 }

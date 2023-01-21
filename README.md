@@ -8,4 +8,5 @@
 - Eureka Server
 - Api Gateway
 - Service Discovery
-- Distributed Tracing
+- Distributed Tracing with Sleuth and Zipkin
+- Zipkin UI: http://localhost:9411/zipkin/
