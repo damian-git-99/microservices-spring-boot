@@ -3,6 +3,7 @@ services:
     container_name: postgres
     image: postgres
     environment:
+      POSTGRES_DB: customer
       POSTGRES_USER: damian
       POSTGRES_PASSWORD: password
       PGDATA: /data/postgres
@@ -10,8 +11,6 @@ services:
       - postgres:/data/postgres
     ports:
       - "5432:5432"
-    networks:
-      - postgres
     restart: unless-stopped
   mysql:
     image: mysql:8.0.19
@@ -38,8 +37,6 @@ services:
       - pgadmin:/var/lib/pgadmin
     ports:
       - "5050:80"
-    networks:
-      - postgres
     restart: unless-stopped
   zipkin:
     image: openzipkin/zipkin
@@ -52,10 +49,66 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-
-networks:
-  postgres:
-    driver: bridge
+  eureka-server:
+    image: damiangalvan/eureka-server:latest
+    container_name: eureka-server
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8761:8761"
+    depends_on:
+      - zipkin
+    restart: unless-stopped
+  api-gateway:
+    image: damiangalvan/api-gateway:latest
+    container_name: api-gateway
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8083:8083"
+    depends_on:
+      - zipkin
+      - eureka-server
+    restart: unless-stopped
+  customer:
+    image: damiangalvan/customer:latest
+    container_name: customer
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8080:8080"
+    depends_on:
+      - zipkin
+      - eureka-server
+      - postgres
+      - rabbitmq
+    restart: unless-stopped
+  fraud:
+    image: damiangalvan/fraud:latest
+    container_name: fraud
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8081:8081"
+    depends_on:
+      - zipkin
+      - eureka-server
+      - postgres
+      - rabbitmq
+    restart: unless-stopped
+  notification:
+    image: damiangalvan/notification:latest
+    container_name: notification
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8082:8082"
+    depends_on:
+      - zipkin
+      - eureka-server
+      - mysql
+      - rabbitmq
+    restart: unless-stopped
 
 volumes:
   postgres:
