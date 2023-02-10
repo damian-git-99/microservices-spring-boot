@@ -3,6 +3,7 @@ services:
     container_name: postgres
     image: postgres
     environment:
+      POSTGRES_DB: customer
       POSTGRES_USER: damian
       POSTGRES_PASSWORD: password
       PGDATA: /data/postgres
@@ -57,6 +58,7 @@ services:
       - "8761:8761"
     depends_on:
       - zipkin
+    restart: unless-stopped
   api-gateway:
     image: damiangalvan/api-gateway:latest
     container_name: api-gateway
@@ -67,6 +69,46 @@ services:
     depends_on:
       - zipkin
       - eureka-server
+    restart: unless-stopped
+  customer:
+    image: damiangalvan/customer:latest
+    container_name: customer
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8080:8080"
+    depends_on:
+      - zipkin
+      - eureka-server
+      - postgres
+      - rabbitmq
+    restart: unless-stopped
+  fraud:
+    image: damiangalvan/fraud:latest
+    container_name: fraud
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8081:8081"
+    depends_on:
+      - zipkin
+      - eureka-server
+      - postgres
+      - rabbitmq
+    restart: unless-stopped
+  notification:
+    image: damiangalvan/notification:latest
+    container_name: notification
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8082:8082"
+    depends_on:
+      - zipkin
+      - eureka-server
+      - mysql
+      - rabbitmq
+    restart: unless-stopped
 
 volumes:
   postgres:
